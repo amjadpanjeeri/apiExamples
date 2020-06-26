@@ -25,17 +25,18 @@ const userCollection = db.collection('Users');
 
 
 //get method
-router.get('/oneuser', (req, res, next) => {
+router.get('/user/:id', (req, res, next) => {
   //get the collection from the database
   db.collection("Users")
     // By adding the "where" clause we have control over what data comes back
-    .where('email', '==', 'amjadpanjeeri@gmail.com')
+    .where(req.params.id, '==', 'id')
     .onSnapshot((snap) => {
       snap.forEach((doc) => {
         res.json({
           "statuscode": "200",
           "email": doc.data().email,
-          "password":doc.data().password
+          "password":doc.data().password,
+          "id":doc.id
         })
       });
     });
@@ -83,6 +84,26 @@ router.post('/users', (req, res, next) => {
   })
 
 });
+
+
+
+//delete method
+router.delete('/users/:id',(req,res,next)=>{
+  let deleteDoc=userCollection.doc(req.params.id).delete();
+  res.json({
+    "message":"Deleted",
+  });
+});
+
+router.get('/example/:id',(req,res,next)=>{
+  let id=req.params.id;
+  const result=userCollection.doc(id).get();
+  console.log(id);
+  
+  res.json({
+    "id":result
+  })
+})
 
 
 module.exports = router;
